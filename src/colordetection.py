@@ -3,69 +3,76 @@
 # vim: fenc=utf-8 ts=4 sw=4 et
 
 
+import numpy as np
+import cv2
+from helpers import ciede2000, bgr2lab
+
+
+BGR_COLORS = {
+    'red'   : (0, 0, 255),
+    'orange': (0, 165, 255),
+    'blue'  : (255, 0, 0),
+    'green' : (0, 255, 0),
+    'white' : (255, 255, 255),
+    'yellow': (0, 255, 255)
+}
+
 
 class ColorDetection:
 
-    def get_color_name(self, hsv):
-        """ Get the name of the color based on the hue.
-
-        :returns: string
+    def get_dominant_color(self, roi):
         """
-        (h,s,v) = hsv
-        if h < 15 and v < 100:
-            return 'red'
-        if h <= 10 and v > 100:
-            return 'orange'
-        elif h <= 30 and s <= 100:
-            return 'white'
-        elif h <= 40:
-            return 'yellow'
-        elif h <= 85:
-            return 'green'
-        elif h <= 130:
-            return 'blue'
+        Get dominant color from a certain region of interest.
 
-        return 'white'
-
-    def name_to_rgb(self, name):
-        """
-        Get the main RGB color for a name.
-
-        :param name: the color name that is requested
+        :param roi: The image list.
         :returns: tuple
         """
-        color = {
-            'red'    : (0,0,255),
-            'orange' : (0,165,255),
-            'blue'   : (255,0,0),
-            'green'  : (0,255,0),
-            'white'  : (255,255,255),
-            'yellow' : (0,255,255)
+        average = roi.mean(axis=0).mean(axis=0)
+        pixels = np.float32(roi.reshape(-1, 3))
+
+        n_colors = 1
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 200, .1)
+        flags = cv2.KMEANS_RANDOM_CENTERS
+        _, labels, palette = cv2.kmeans(pixels, n_colors, None, criteria, 10, flags)
+        _, counts = np.unique(labels, return_counts=True)
+        dominant = palette[np.argmax(counts)]
+        return tuple(dominant)
+
+    def get_closest_color(self, bgr):
+        """
+        Get the color name of a BGR color using CIEDE2000 distance.
+
+        :param bgr tuple: The BGR color to convert.
+        """
+        lab = bgr2lab(bgr)
+        distances = []
+        for color_name, color_bgr in BGR_COLORS.items():
+            distances.append({
+                'color_name': color_name,
+                'color_bgr': color_bgr,
+                'distance': ciede2000(lab, bgr2lab(color_bgr))
+            })
+        closest = min(distances, key=lambda item: item['distance'])
+        return closest
+
+    def convert_bgr_to_notation(self, bgr):
+        """
+        Convert BGR tuple to rubik's cube notation.
+        The BGR color must be normalized first by the get_closest_color method.
+
+        :param bgr tuple: The BGR values to convert.
+        """
+        notations = {
+            'green' : 'F',
+            'white' : 'U',
+            'blue'  : 'B',
+            'red'   : 'R',
+            'orange': 'L',
+            'yellow': 'D'
         }
-        return color[name]
-
-    def average_hsv(self, roi):
-        """ Average the HSV colors in a region of interest.
-
-        :param roi: the image array
-        :returns: tuple
-        """
-        h   = 0
-        s   = 0
-        v   = 0
-        num = 0
-        for y in range(len(roi)):
-            if y % 10 == 0:
-                for x in range(len(roi[y])):
-                    if x % 10 == 0:
-                        chunk = roi[y][x]
-                        num += 1
-                        h += chunk[0]
-                        s += chunk[1]
-                        v += chunk[2]
-        h /= num
-        s /= num
-        v /= num
-        return (int(h), int(s), int(v))
+        for color_name, color_bgr in BGR_COLORS.items():
+            if color_bgr == bgr:
+                return notations[color_name]
+        return False
 
 ColorDetector = ColorDetection()
