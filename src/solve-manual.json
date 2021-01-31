@@ -38,5 +38,25 @@
         "F" : "Draai de voorkant een kwartslag naar rechts.",
         "F'": "Draai de voorkant een kwartslag naar links.",
         "F2": "Draai de voorkant 180 graden."
+    },
+    "afr": {
+        "R" : "Draai die regterkant 'n kwart draai weg van jou af.",
+        "R'": "Draai die regterkant 'n kwart draai na jou toe.",
+        "R2": "Draai die regterkant 180 grade.",
+        "L" : "Draai die linkerkant 'n kwart draai na jou toe.",
+        "L'": "Draai die linkerkant 'n kwart draai van jou af.",
+        "L2": "Draai die linkerkant 180 grade.",
+        "U" : "Draai die boonste laag 'n kwart draai na links.",
+        "U'": "Draai die boonste laag 'n kwart draai na regs.",
+        "U2": "Draai die boonste laag 180 grade.",
+        "D" : "Draai die onderste laag 'n kwart draai na regs.",
+        "D'": "Draai die onderste laag 'n kwart draai naar links.",
+        "D2": "Draai die onderste laag 180 grade.",
+        "B" : "Draai die agterkant 'n kwart draai na links.",
+        "B'": "Draai die agterkant 'n kwart draai na regs.",
+        "B2": "Draai die agterkant 180 grade.",
+        "F" : "Draai die voorkant 'n kwart draai na regs.",
+        "F'": "Draai die voorkant 'n kwart draai na links.",
+        "F2": "Draai die voorkant 180 grade."
     }
 }

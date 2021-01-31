@@ -98,10 +98,11 @@ is set to `en`.
 
 Available languages are:
 
-| language | key  |
-| ---      | ---  |
-| English  | `en` |
-| Dutch    | `nl` |
+| language  |  key  |
+| ---       |  ---  |
+| English   | `en`  |
+| Dutch     | `nl`  |
+| Afrikaans | `afr` |
 
 # Example runs
 
